@@ -22,6 +22,7 @@ app.use("/api/v1.0", studentRoute);
 app.use(express.static(path.join(__dirname, "/client/build")));
 app.get("*", (req, res) => {
   //   res.send("hello");
+  res.sendFile(path.join(__dirname, "/client/build/index.html"));
 });
 
 app.listen(PORT, () => {
