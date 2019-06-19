@@ -7,6 +7,7 @@ const userRoute = require("./server/routes/user-routes");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
+const passport = require("passport");
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }, err => {
   if (err) {
@@ -16,6 +17,8 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true }, err => {
   console.log("Server is connected to MongoDB Database");
 });
 
+app.use(passport.initialize());
+require("./server/config/passport")(passport);
 app.use(cors());
 app.use(express.json());
 app.use("/api/v1.0", studentRoute);

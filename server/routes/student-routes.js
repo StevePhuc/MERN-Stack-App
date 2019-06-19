@@ -1,10 +1,17 @@
 const express = require("express");
 const studentRoute = express.Router();
 const Student = require("../models/Student");
+const jwt = require("jsonwebtoken");
+const passport = require("passport");
 
-studentRoute.get("/", (req, res) => {
-  res.send("Mern Applicaton");
-});
+studentRoute.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.send("Home page ");
+  }
+);
+
 studentRoute.get("/students", (req, res) => {
   Student.find({}, (err, students) => {
     if (err) {
