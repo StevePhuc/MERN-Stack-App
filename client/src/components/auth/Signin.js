@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
-
+const styles = {
+  color: "brown"
+};
 class Signin extends Component {
   state = {
     email: "",
@@ -17,16 +19,20 @@ class Signin extends Component {
   handleSubmit = e => {
     e.preventDefault();
     console.log(this.state);
-    axios
-      .post("/api/v1.0/users/signin", this.state)
-      .then(response => {
-        const token = response.data.token;
-        localStorage.setItem("jwtToken", token);
-        this.props.history.push("/students");
-      })
-      .catch(error => console.log(error));
+    this.props.loginUser(this.state, this.props.history);
+    // axios
+    //   .post("/api/v1.0/users/signin", this.state)
+    //   .then(response => {
+    //     const token = response.data.token;
+    //     localStorage.setItem("jwtToken", token);
+    //     this.props.history.push("/students");
+    //   })
+    //   .catch(error => console.log(error));
   };
   render() {
+    const { errors } = this.props;
+    console.log(this.props);
+
     return (
       <form onSubmit={this.handleSubmit}>
         <div class="form-group">
@@ -39,6 +45,7 @@ class Signin extends Component {
             value={this.state.email}
             onChange={this.handleChange}
           />
+          <p>{errors.email}</p>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -50,6 +57,7 @@ class Signin extends Component {
             value={this.state.password}
             onChange={this.handleChange}
           />
+          <p>{errors.password}</p>
         </div>
         <button class="btn btn-primary" type="submit">
           Sign In

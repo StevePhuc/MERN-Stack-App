@@ -4,14 +4,14 @@ const User = require("../models/User");
 const gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const validateSigninInput = require("../validation/signin-validation");
 
 userRoute.get("/", (req, res) => {
   res.send("Welcome user");
 });
 userRoute.post("/signup", (req, res) => {
-  console.log(req.body);
-
   const errors = {};
+
   const { firstName, username, email, password } = req.body;
   const avatar = gravatar.url(email, { s: "100", r: "x", d: "retro" }, true);
   User.findOne({ email }, (err, user) => {
@@ -45,12 +45,17 @@ userRoute.post("/signup", (req, res) => {
 });
 
 userRoute.post("/signin", (req, res) => {
-  const errors = {};
+  const { errors, isValid } = validateSigninInput(req.body);
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   const { email, password } = req.body;
   User.findOne({ email }, (err, user) => {
     if (!user) {
       errors.email = "Email does not exist";
-      return res.json(errors);
+      return res.status(400).json(errors);
+      // return res.json(errors);
     } else {
       bcrypt.compare(password, user.password, function(err, isMatch) {
         if (isMatch) {
@@ -75,7 +80,8 @@ userRoute.post("/signin", (req, res) => {
           );
         } else {
           errors.password = "Password did not match";
-          return res.json(errors);
+          return res.status(400).json(errors);
+          // return res.json(errors);
         }
       });
     }
